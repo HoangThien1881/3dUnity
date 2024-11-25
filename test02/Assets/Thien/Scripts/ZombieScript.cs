@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine;
 
 public class ZombieScript : MonoBehaviour
 {
@@ -10,12 +8,17 @@ public class ZombieScript : MonoBehaviour
 
     public float radius = 10f; // bán kính tìm ki?m m?c tiêu
     public Vector3 originalePosition; // v? trí ban ??u
-    public float maxDistance = 50f; // kho?ng cách t?i ?a
+    public float maxDistance = 50f; // kho?ng cách t?i n?i
     public Health health;
 
     public Animator animator; // khai báo component
 
     public DamageZone damageZone;
+    public GameObject hamburgerPrefab; // hamburger prefab
+    public float dropChance = 0.25f; // t? l? r?i hamburger (25%)
+
+    private bool hasDroppedBurger = false; // C? ki?m tra xem zombie ?ã r?i hamburger ch?a
+
     // state machine
     public enum CharacterState
     {
@@ -25,11 +28,9 @@ public class ZombieScript : MonoBehaviour
     }
     public CharacterState currentState; // tr?ng thái hi?n t?i
 
-
     void Start()
     {
         originalePosition = transform.position;
-
     }
 
     void Update()
@@ -49,46 +50,37 @@ public class ZombieScript : MonoBehaviour
         {
             return;
         }
-        // kho?ng cách t? v? trí hi?n t?i ??n v? trí ban ??u
+
         var distanceToOriginal = Vector3.Distance(originalePosition, transform.position);
-        // kho?ng cách t? v? trí hi?n t?i ??n m?c tiêu
         var distance = Vector3.Distance(target.position, transform.position);
         if (distance <= radius && distanceToOriginal <= maxDistance)
         {
-            // di chuy?n ??n m?c tiêu
             navMeshAgent.SetDestination(target.position);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
-            distance = Vector3.Distance(target.position, transform.position);
             if (distance < 2f)
             {
-                // t?n công
                 ChangeState(CharacterState.Attack);
             }
         }
 
         if (distance > radius || distanceToOriginal > maxDistance)
         {
-            // quay v? v? trí ban ??u
             navMeshAgent.SetDestination(originalePosition);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
-            // chuy?n sang tr?ng thái ??ng yên
             distance = Vector3.Distance(originalePosition, transform.position);
             if (distance < 1f)
             {
                 animator.SetFloat("Speed", 0);
             }
 
-            // bình th??ng
             ChangeState(CharacterState.Normal);
         }
     }
 
-    // chuy?n ??i tr?ng thái
     private void ChangeState(CharacterState newState)
     {
-        // exit current state
         switch (currentState)
         {
             case CharacterState.Normal:
@@ -97,11 +89,8 @@ public class ZombieScript : MonoBehaviour
                 break;
             case CharacterState.Die:
                 break;
-
-
         }
 
-        // enter new state
         switch (newState)
         {
             case CharacterState.Normal:
@@ -113,35 +102,23 @@ public class ZombieScript : MonoBehaviour
                 break;
             case CharacterState.Die:
                 animator.SetTrigger("Die");
-                Destroy(gameObject, 3f);
+                DropHamburger(); // G?i hàm DropHamburger khi zombie ch?t
+                Destroy(gameObject, 3f); // H?y zombie sau khi animation ch?t
                 break;
-
-
-
-                // update current state
-
         }
         currentState = newState;
-
     }
-    //public override void TakeDamage(float damage)
-    //{
-    //    base.TakeDamage(damage);
-    //    if(currentHP <= 0)
-    //    {
-    //        ChangeState(CharacterState.Die);
-    //    }
-    //}
-    //public void Wander()
-    //{
 
-    //    var randomDirection = Random.insideUnitSphere * radius;
-    //    randomDirection += originalePosition;
-    //    NavMeshHit hit;
-    //    NavMesh.SamplePosition(randomDirection, out hit, radius, 1);
-    //    var finalPosition = hit.position;
-    //    navMeshAgent.SetDestination(finalPosition);
-    //    animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
-    //}
-
+    // Hàm ?? r?i hamburger khi zombie ch?t v?i t? l? 25%
+    private void DropHamburger()
+    {
+        // Ki?m tra xem hamburger ?ã r?i ch?a và zombie ch?a ch?t
+        if (!hasDroppedBurger && Random.value <= dropChance)
+        {
+            // T?o hamburger t?i v? trí c?a zombie
+            Instantiate(hamburgerPrefab, transform.position, Quaternion.identity);
+            hasDroppedBurger = true; // ?ánh d?u là hamburger ?ã r?i
+            Debug.Log("Zombie ?ã r?i hamburger!");
+        }
+    }
 }
