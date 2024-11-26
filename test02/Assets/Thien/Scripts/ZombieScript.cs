@@ -1,6 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UI;
+using UnityEngine.UI; // Thêm dòng này để sử dụng Slider
 
 public class ZombieScript : MonoBehaviour
 {
@@ -10,14 +10,14 @@ public class ZombieScript : MonoBehaviour
     public Vector3 originalePosition;
     public float maxDistance = 50f;
     public Health health;
-
+    public PlayerExp playerExp; // Thêm tham chiếu tới PlayerExp
     public Animator animator;
     public DamageZone damageZone;
     public GameObject hamburgerPrefab;
     public float dropChance = 100f;
 
     private bool hasDroppedBurger = false;
-    public Slider healthBar;
+    public Slider healthBar; // Slider để hiển thị HP
     public Canvas healthBarCanvas;
 
     public enum CharacterState
@@ -28,7 +28,7 @@ public class ZombieScript : MonoBehaviour
     }
     public CharacterState currentState;
 
-    private bool isAttacking = false; // Ki?m tra zombie c� ?ang t?n c�ng kh�ng
+    private bool isAttacking = false;
 
     void Start()
     {
@@ -55,6 +55,7 @@ public class ZombieScript : MonoBehaviour
         if (health.currentHP <= 0)
         {
             ChangeState(CharacterState.Die);
+            playerExp.AddExp(15f); // Cộng EXP cho người chơi khi zombie chết
             return;
         }
 
@@ -101,17 +102,17 @@ public class ZombieScript : MonoBehaviour
 
             case CharacterState.Attack:
                 isAttacking = true;
-                navMeshAgent.isStopped = true; // D?ng di chuy?n
+                navMeshAgent.isStopped = true; // Dừng di chuyển
                 animator.SetTrigger("Attack");
                 damageZone.BeginAttack();
-                Invoke(nameof(ResumeMovement), 1.5f); // Ti?p t?c di chuy?n sau 1.5 gi�y
+                Invoke(nameof(ResumeMovement), 1.5f); // Tiếp tục di chuyển sau 1.5 giây
                 break;
 
             case CharacterState.Die:
                 navMeshAgent.isStopped = true;
                 animator.SetTrigger("Die");
                 DropHamburger();
-                Destroy(gameObject, 3f);
+                Destroy(gameObject, 3f); // Huỷ zombie sau khi chết
                 break;
         }
 
@@ -127,7 +128,6 @@ public class ZombieScript : MonoBehaviour
 
     private void DropHamburger()
     {
-        // Lo?i b? ?i?u ki?n ki?m tra t? l?, burger lu�n ???c t?o
         if (!hasDroppedBurger)
         {
             Instantiate(hamburgerPrefab, transform.position, Quaternion.identity);
