@@ -313,11 +313,11 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9067130667269675161, guid: cb2551d5c39ec4700b19f3b57c030da4,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1016584721}
+      addedObject: {fileID: 1016584720}
     - targetCorrespondingSourceObject: {fileID: 9067130667269675161, guid: cb2551d5c39ec4700b19f3b57c030da4,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1016584720}
+      addedObject: {fileID: 1662425335}
   m_SourcePrefab: {fileID: 100100000, guid: cb2551d5c39ec4700b19f3b57c030da4, type: 3}
 --- !u!1 &1016584719 stripped
 GameObject:
@@ -339,18 +339,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 1000
   currentHP: 1000
---- !u!114 &1016584721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1016584719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04615e571f17573499309d3b389baec4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &1016584722
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1023,8 +1011,8 @@ Transform:
   m_GameObject: {fileID: 1578931669}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 21.2031, y: 59.94215, z: 41.6303}
-  m_LocalScale: {x: 2.2707217, y: 1, z: 2.0532122}
+  m_LocalPosition: {x: 16.9019, y: 59.94215, z: 55.5477}
+  m_LocalScale: {x: 4.725137, y: 1, z: 4.836752}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1071,6 +1059,31 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1016584718}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1662425335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016584719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04615e571f17573499309d3b389baec4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  navMeshAgent: {fileID: 0}
+  target: {fileID: 0}
+  radius: 10
+  originalePosition: {x: 0, y: 0, z: 0}
+  maxDistance: 50
+  health: {fileID: 0}
+  animator: {fileID: 0}
+  damageZone: {fileID: 0}
+  hamburgerPrefab: {fileID: 0}
+  dropChance: 100
+  healthBar: {fileID: 0}
+  healthBarCanvas: {fileID: 0}
+  currentState: 0
 --- !u!1 &1748941170
 GameObject:
   m_ObjectHideFlags: 0
