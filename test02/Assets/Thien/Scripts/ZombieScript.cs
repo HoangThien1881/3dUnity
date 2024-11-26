@@ -1,58 +1,68 @@
-using UnityEngine.AI;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class ZombieScript : MonoBehaviour
 {
     public NavMeshAgent navMeshAgent;
-    public Transform target; // m?c tiêu
-
-    public float radius = 10f; // bán kính tìm ki?m m?c tiêu
-    public Vector3 originalePosition; // v? trí ban ??u
-    public float maxDistance = 50f; // kho?ng cách t?i n?i
+    public Transform target;
+    public float radius = 10f;
+    public Vector3 originalePosition;
+    public float maxDistance = 50f;
     public Health health;
 
-    public Animator animator; // khai báo component
-
+    public Animator animator;
     public DamageZone damageZone;
-    public GameObject hamburgerPrefab; // hamburger prefab
-    public float dropChance = 0.25f; // t? l? r?i hamburger (25%)
+    public GameObject hamburgerPrefab;
+    public float dropChance = 0.25f;
 
-    private bool hasDroppedBurger = false; // C? ki?m tra xem zombie ?ã r?i hamburger ch?a
+    private bool hasDroppedBurger = false;
+    public Slider healthBar;
+    public Canvas healthBarCanvas;
 
-    // state machine
     public enum CharacterState
     {
         Normal,
         Attack,
         Die
     }
-    public CharacterState currentState; // tr?ng thái hi?n t?i
+    public CharacterState currentState;
+
+    private bool isAttacking = false; // Ki?m tra zombie có ?ang t?n công không
 
     void Start()
     {
         originalePosition = transform.position;
+        if (healthBar != null)
+        {
+            healthBar.maxValue = health.maxHP;
+            healthBar.value = health.currentHP;
+        }
     }
 
     void Update()
     {
-        if (health.currentHP <= 0)
+        if (healthBar != null)
         {
-            ChangeState(CharacterState.Die);
+            healthBar.value = health.currentHP;
         }
-        if (target != null)
-        {
-            var lookPos = target.position - transform.position;
-            lookPos.y = 0;
-            var rotation = Quaternion.LookRotation(lookPos);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5);
-        }
+
         if (currentState == CharacterState.Die)
         {
             return;
         }
 
+        if (health.currentHP <= 0)
+        {
+            ChangeState(CharacterState.Die);
+            return;
+        }
+
+        if (isAttacking) return;
+
         var distanceToOriginal = Vector3.Distance(originalePosition, transform.position);
         var distance = Vector3.Distance(target.position, transform.position);
+
         if (distance <= radius && distanceToOriginal <= maxDistance)
         {
             navMeshAgent.SetDestination(target.position);
@@ -63,14 +73,12 @@ public class ZombieScript : MonoBehaviour
                 ChangeState(CharacterState.Attack);
             }
         }
-
-        if (distance > radius || distanceToOriginal > maxDistance)
+        else
         {
             navMeshAgent.SetDestination(originalePosition);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
-            distance = Vector3.Distance(originalePosition, transform.position);
-            if (distance < 1f)
+            if (distanceToOriginal < 1f)
             {
                 animator.SetFloat("Speed", 0);
             }
@@ -81,44 +89,48 @@ public class ZombieScript : MonoBehaviour
 
     private void ChangeState(CharacterState newState)
     {
-        switch (currentState)
-        {
-            case CharacterState.Normal:
-                break;
-            case CharacterState.Attack:
-                break;
-            case CharacterState.Die:
-                break;
-        }
+        if (currentState == newState) return;
 
         switch (newState)
         {
             case CharacterState.Normal:
                 damageZone.EndAttack();
+                isAttacking = false;
+                navMeshAgent.isStopped = false;
                 break;
+
             case CharacterState.Attack:
+                isAttacking = true;
+                navMeshAgent.isStopped = true; // D?ng di chuy?n
                 animator.SetTrigger("Attack");
                 damageZone.BeginAttack();
+                Invoke(nameof(ResumeMovement), 1.5f); // Ti?p t?c di chuy?n sau 1.5 giây
                 break;
+
             case CharacterState.Die:
+                navMeshAgent.isStopped = true;
                 animator.SetTrigger("Die");
-                DropHamburger(); // G?i hàm DropHamburger khi zombie ch?t
-                Destroy(gameObject, 3f); // H?y zombie sau khi animation ch?t
+                DropHamburger();
+                Destroy(gameObject, 3f);
                 break;
         }
+
         currentState = newState;
     }
 
-    // Hàm ?? r?i hamburger khi zombie ch?t v?i t? l? 25%
+    private void ResumeMovement()
+    {
+        isAttacking = false;
+        navMeshAgent.isStopped = false;
+        ChangeState(CharacterState.Normal);
+    }
+
     private void DropHamburger()
     {
-        // Ki?m tra xem hamburger ?ã r?i ch?a và zombie ch?a ch?t
         if (!hasDroppedBurger && Random.value <= dropChance)
         {
-            // T?o hamburger t?i v? trí c?a zombie
             Instantiate(hamburgerPrefab, transform.position, Quaternion.identity);
-            hasDroppedBurger = true; // ?ánh d?u là hamburger ?ã r?i
-            Debug.Log("Zombie ?ã r?i hamburger!");
+            hasDroppedBurger = true;
         }
     }
 }
