@@ -305,13 +305,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 9500000, guid: 61b8698a2176146289745095c88a5155, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: fb411162c748a1a4dabeacce6c5f61ff, type: 2}
-    - target: {fileID: 9500000, guid: 61b8698a2176146289745095c88a5155, type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
+    - target: {fileID: 100072, guid: 61b8698a2176146289745095c88a5155, type: 3}
+      propertyPath: m_Name
+      value: monster_orc
+      objectReference: {fileID: 0}
+    - target: {fileID: 100072, guid: 61b8698a2176146289745095c88a5155, type: 3}
+      propertyPath: m_TagString
+      value: Zombie
       objectReference: {fileID: 0}
     - target: {fileID: 400072, guid: 61b8698a2176146289745095c88a5155, type: 3}
       propertyPath: m_LocalScale.x
@@ -365,13 +365,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 100072, guid: 61b8698a2176146289745095c88a5155, type: 3}
-      propertyPath: m_Name
-      value: monster_orc
-      objectReference: {fileID: 0}
-    - target: {fileID: 100072, guid: 61b8698a2176146289745095c88a5155, type: 3}
-      propertyPath: m_TagString
-      value: Zombie
+    - target: {fileID: 9500000, guid: 61b8698a2176146289745095c88a5155, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: fb411162c748a1a4dabeacce6c5f61ff, type: 2}
+    - target: {fileID: 9500000, guid: 61b8698a2176146289745095c88a5155, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1400,8 +1400,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -1.252, y: 0}
-  m_SizeDelta: {x: 2.5, y: 0}
+  m_AnchoredPosition: {x: -1.24, y: 0.000004440546}
+  m_SizeDelta: {x: 2.5, y: 0.0000042319}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1748941172
 MonoBehaviour:
@@ -1416,7 +1416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.1921128, g: 1, b: 0, a: 1}
+  m_Color: {r: 0.19215703, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1449,6 +1449,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 47797148462177628, guid: 39d403d62112c1b4b9dadd55607e00d2,
+        type: 3}
+      propertyPath: m_Value
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 196598654422087528, guid: 39d403d62112c1b4b9dadd55607e00d2,
         type: 3}
       propertyPath: currentHP
