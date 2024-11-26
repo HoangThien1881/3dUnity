@@ -1,147 +1,137 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class ZombieScript : MonoBehaviour
 {
     public NavMeshAgent navMeshAgent;
-    public Transform target; // m?c tiêu
-
-    public float radius = 10f; // bán kính tìm ki?m m?c tiêu
-    public Vector3 originalePosition; // v? trí ban ??u
-    public float maxDistance = 50f; // kho?ng cách t?i ?a
+    public Transform target;
+    public float radius = 10f;
+    public Vector3 originalePosition;
+    public float maxDistance = 50f;
     public Health health;
 
-    public Animator animator; // khai báo component
-
+    public Animator animator;
     public DamageZone damageZone;
-    // state machine
+    public GameObject hamburgerPrefab;
+    public float dropChance = 100f;
+
+    private bool hasDroppedBurger = false;
+    public Slider healthBar;
+    public Canvas healthBarCanvas;
+
     public enum CharacterState
     {
         Normal,
         Attack,
         Die
     }
-    public CharacterState currentState; // tr?ng thái hi?n t?i
+    public CharacterState currentState;
 
+    private bool isAttacking = false; // Ki?m tra zombie có ?ang t?n công không
 
     void Start()
     {
         originalePosition = transform.position;
-
+        if (healthBar != null)
+        {
+            healthBar.maxValue = health.maxHP;
+            healthBar.value = health.currentHP;
+        }
     }
 
     void Update()
     {
-        if (health.currentHP <= 0)
+        if (healthBar != null)
         {
-            ChangeState(CharacterState.Die);
+            healthBar.value = health.currentHP;
         }
-        if (target != null)
-        {
-            var lookPos = target.position - transform.position;
-            lookPos.y = 0;
-            var rotation = Quaternion.LookRotation(lookPos);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5);
-        }
+
         if (currentState == CharacterState.Die)
         {
             return;
         }
-        // kho?ng cách t? v? trí hi?n t?i ??n v? trí ban ??u
+
+        if (health.currentHP <= 0)
+        {
+            ChangeState(CharacterState.Die);
+            return;
+        }
+
+        if (isAttacking) return;
+
         var distanceToOriginal = Vector3.Distance(originalePosition, transform.position);
-        // kho?ng cách t? v? trí hi?n t?i ??n m?c tiêu
         var distance = Vector3.Distance(target.position, transform.position);
+
         if (distance <= radius && distanceToOriginal <= maxDistance)
         {
-            // di chuy?n ??n m?c tiêu
             navMeshAgent.SetDestination(target.position);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
-            distance = Vector3.Distance(target.position, transform.position);
             if (distance < 2f)
             {
-                // t?n công
                 ChangeState(CharacterState.Attack);
             }
         }
-
-        if (distance > radius || distanceToOriginal > maxDistance)
+        else
         {
-            // quay v? v? trí ban ??u
             navMeshAgent.SetDestination(originalePosition);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
-            // chuy?n sang tr?ng thái ??ng yên
-            distance = Vector3.Distance(originalePosition, transform.position);
-            if (distance < 1f)
+            if (distanceToOriginal < 1f)
             {
                 animator.SetFloat("Speed", 0);
             }
 
-            // bình th??ng
             ChangeState(CharacterState.Normal);
         }
     }
 
-    // chuy?n ??i tr?ng thái
     private void ChangeState(CharacterState newState)
     {
-        // exit current state
-        switch (currentState)
-        {
-            case CharacterState.Normal:
-                break;
-            case CharacterState.Attack:
-                break;
-            case CharacterState.Die:
-                break;
+        if (currentState == newState) return;
 
-
-        }
-
-        // enter new state
         switch (newState)
         {
             case CharacterState.Normal:
                 damageZone.EndAttack();
+                isAttacking = false;
+                navMeshAgent.isStopped = false;
                 break;
+
             case CharacterState.Attack:
+                isAttacking = true;
+                navMeshAgent.isStopped = true; // D?ng di chuy?n
                 animator.SetTrigger("Attack");
                 damageZone.BeginAttack();
+                Invoke(nameof(ResumeMovement), 1.5f); // Ti?p t?c di chuy?n sau 1.5 giây
                 break;
+
             case CharacterState.Die:
+                navMeshAgent.isStopped = true;
                 animator.SetTrigger("Die");
+                DropHamburger();
                 Destroy(gameObject, 3f);
                 break;
-
-
-
-                // update current state
-
         }
+
         currentState = newState;
-
     }
-    //public override void TakeDamage(float damage)
-    //{
-    //    base.TakeDamage(damage);
-    //    if(currentHP <= 0)
-    //    {
-    //        ChangeState(CharacterState.Die);
-    //    }
-    //}
-    //public void Wander()
-    //{
 
-    //    var randomDirection = Random.insideUnitSphere * radius;
-    //    randomDirection += originalePosition;
-    //    NavMeshHit hit;
-    //    NavMesh.SamplePosition(randomDirection, out hit, radius, 1);
-    //    var finalPosition = hit.position;
-    //    navMeshAgent.SetDestination(finalPosition);
-    //    animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
-    //}
+    private void ResumeMovement()
+    {
+        isAttacking = false;
+        navMeshAgent.isStopped = false;
+        ChangeState(CharacterState.Normal);
+    }
 
+    private void DropHamburger()
+    {
+        // Lo?i b? ?i?u ki?n ki?m tra t? l?, burger luôn ???c t?o
+        if (!hasDroppedBurger)
+        {
+            Instantiate(hamburgerPrefab, transform.position, Quaternion.identity);
+            hasDroppedBurger = true;
+        }
+    }
 }

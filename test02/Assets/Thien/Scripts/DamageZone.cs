@@ -6,7 +6,7 @@ using UnityEngine;
 public class DamageZone : MonoBehaviour
 {
     public Collider damageCollider;
-    public int damageAmount = 20;
+    public int damageAmount = 1;
     public string targetTag = "Player";
     public List<Collider> colliderTarget = new List<Collider>();
 
@@ -27,6 +27,9 @@ public class DamageZone : MonoBehaviour
             }
             flag = true;
         }
+    
+        
+        
     }
     void OnTriggerEnter(Collider other)
     {
