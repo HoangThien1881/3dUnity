@@ -14,7 +14,7 @@ public class ZombieScript : MonoBehaviour
     public Animator animator;
     public DamageZone damageZone;
     public GameObject hamburgerPrefab;
-    public float dropChance = 0.25f;
+    public float dropChance = 100f;
 
     private bool hasDroppedBurger = false;
     public Slider healthBar;
@@ -127,7 +127,8 @@ public class ZombieScript : MonoBehaviour
 
     private void DropHamburger()
     {
-        if (!hasDroppedBurger && Random.value <= dropChance)
+        // Lo?i b? ?i?u ki?n ki?m tra t? l?, burger luôn ???c t?o
+        if (!hasDroppedBurger)
         {
             Instantiate(hamburgerPrefab, transform.position, Quaternion.identity);
             hasDroppedBurger = true;
