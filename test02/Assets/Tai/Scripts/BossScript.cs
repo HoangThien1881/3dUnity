@@ -16,6 +16,13 @@ public class BossScript : MonoBehaviour
     public GameObject hamburgerPrefab;
     public float dropChance = 100f;
 
+    public GameObject rockPrefab; // Prefab viên đá
+    public Transform throwPoint; // Vị trí xuất hiện viên đá (tay boss)
+    public float throwSpeed = 10f; // Tốc độ bay của viên đá
+    private int meleeAttackCount = 0; // Đếm số lần đánh gần
+    private int maxMeleeAttacksBeforeThrow = 3; // Số lần đánh trước khi ném đá
+
+
     private bool hasDroppedBurger = false;
     public Slider healthBar;
     public Canvas healthBarCanvas;
@@ -24,6 +31,7 @@ public class BossScript : MonoBehaviour
     {
         Normal,
         Attack,
+        ThrowRock, // Ném đá
         Die
     }
     public CharacterState currentState;
@@ -42,39 +50,56 @@ public class BossScript : MonoBehaviour
 
     void Update()
     {
+        // Cập nhật thanh máu
         if (healthBar != null)
         {
             healthBar.value = health.currentHP;
         }
 
+        // Dừng nếu boss đã chết
         if (currentState == CharacterState.Die)
         {
             return;
         }
 
+        // Chuyển sang trạng thái chết nếu máu <= 0
         if (health.currentHP <= 0)
         {
             ChangeState(CharacterState.Die);
             return;
         }
 
-        if (isAttacking) return;
+        // Dừng các hành động nếu đang tấn công hoặc ném đá
+        if (isAttacking || currentState == CharacterState.ThrowRock) return;
 
+        // Tính toán khoảng cách
         var distanceToOriginal = Vector3.Distance(originalePosition, transform.position);
-        var distance = Vector3.Distance(target.position, transform.position);
+        var distanceToTarget = Vector3.Distance(target.position, transform.position);
 
-        if (distance <= radius && distanceToOriginal <= maxDistance)
+        // Nếu người chơi trong tầm phát hiện và boss không vượt quá phạm vi di chuyển tối đa
+        if (distanceToTarget <= radius && distanceToOriginal <= maxDistance)
         {
             navMeshAgent.SetDestination(target.position);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
-            if (distance < 2f)
+            // Khi người chơi ở khoảng cách gần
+            if (distanceToTarget < 2f)
             {
-                ChangeState(CharacterState.Attack);
+                if (meleeAttackCount >= maxMeleeAttacksBeforeThrow)
+                {
+                    // Chuyển sang trạng thái ném đá
+                    ChangeState(CharacterState.ThrowRock);
+                }
+                else
+                {
+                    // Đánh gần
+                    ChangeState(CharacterState.Attack);
+                }
             }
         }
         else
         {
+            // Quay về vị trí ban đầu nếu người chơi rời khỏi tầm phát hiện
             navMeshAgent.SetDestination(originalePosition);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
@@ -83,6 +108,7 @@ public class BossScript : MonoBehaviour
                 animator.SetFloat("Speed", 0);
             }
 
+            // Chuyển về trạng thái bình thường
             ChangeState(CharacterState.Normal);
         }
     }
@@ -104,8 +130,27 @@ public class BossScript : MonoBehaviour
                 navMeshAgent.isStopped = true; // D?ng di chuy?n
                 animator.SetTrigger("Attack");
                 damageZone.BeginAttack();
-                Invoke(nameof(ResumeMovement), 1.5f); // Ti?p t?c di chuy?n sau 1.5 gi�y
+
+                meleeAttackCount++; // Tăng số lần đánh gần
+                Debug.Log("Melee attack count: " + meleeAttackCount);
+
+                // Nếu đã đủ số lần tấn công gần thì chuyển sang ném đá
+                if (meleeAttackCount >= maxMeleeAttacksBeforeThrow)
+                {
+                    ChangeState(CharacterState.ThrowRock);
+                }
+                else
+                {
+                    Invoke(nameof(ResumeMovement), 1.5f); // Tiếp tục di chuyển sau 1.5 giây
+                }
                 break;
+
+            case CharacterState.ThrowRock:
+                navMeshAgent.isStopped = true; // Dừng di chuyển
+                animator.SetTrigger("Throw"); // Kích hoạt animation ném đá
+                Invoke(nameof(PerformThrow), 1f); // Ném đá sau một khoảng thời gian
+                break;
+
 
             case CharacterState.Die:
                 navMeshAgent.isStopped = true;
@@ -133,5 +178,31 @@ public class BossScript : MonoBehaviour
             Instantiate(hamburgerPrefab, transform.position, Quaternion.identity);
             hasDroppedBurger = true;
         }
+    }
+
+    private void PerformThrow()
+    {
+        if (currentState == CharacterState.Die) return; // Không ném nếu boss đã chết
+
+        // Tạo viên đá
+        GameObject rock = Instantiate(rockPrefab, throwPoint.position, Quaternion.identity);
+
+        // Hướng ném về phía người chơi
+        Vector3 direction = (target.position - throwPoint.position).normalized;
+
+        // Thêm lực vào viên đá
+        Rigidbody rb = rock.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = direction * throwSpeed;
+        }
+
+        Debug.Log("Rock instantiated at " + throwPoint.position);
+        Debug.Log("Direction: " + direction);
+
+
+        // Sau khi ném, quay lại trạng thái Normal
+        ChangeState(CharacterState.Normal);
+        meleeAttackCount = 0; // Reset số lần đánh gần
     }
 }
