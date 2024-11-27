@@ -1352,7 +1352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   navMeshAgent: {fileID: 1662425337}
   target: {fileID: 1034515173}
-  radius: 10
+  radius: 40
   originalePosition: {x: 0, y: 0, z: 0}
   maxDistance: 50
   health: {fileID: 1016584720}

@@ -6,7 +6,7 @@ public class BossScript : MonoBehaviour
 {
     public NavMeshAgent navMeshAgent;
     public Transform target;
-    public float radius = 10f;
+    public float radius = 40f;
     public Vector3 originalePosition;
     public float maxDistance = 50f;
     public Health health;
