@@ -149,7 +149,7 @@ public class BossScript : MonoBehaviour
                 navMeshAgent.isStopped = true; // Dừng di chuyển
                 animator.SetTrigger("Throw"); // Kích hoạt animation ném đá
                 Invoke(nameof(PerformThrow), 1f); // Ném đá sau một khoảng thời gian
-                break;
+                break;  
 
 
             case CharacterState.Die:
