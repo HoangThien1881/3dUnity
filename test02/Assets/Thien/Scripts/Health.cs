@@ -11,12 +11,12 @@ public class Health : MonoBehaviour
     {
         currentHP -= damage;
         currentHP = Mathf.Max(0, currentHP);
-        Debug.Log("Zombie b? b?n! HP còn l?i: " + currentHP);
+        Debug.Log("Zombie b? b?n! HP cï¿½n l?i: " + currentHP);
 
-        // N?u máu v? 0, zombie ch?t
+        // N?u mï¿½u v? 0, zombie ch?t
         if (currentHP <= 0)
         {
-            Debug.Log("Zombie ?ã ch?t!");
+            Debug.Log("Zombie ?ï¿½ ch?t!");
         }
     }
     private void Start()

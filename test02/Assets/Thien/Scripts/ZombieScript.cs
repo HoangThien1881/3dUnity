@@ -28,7 +28,7 @@ public class ZombieScript : MonoBehaviour
     }
     public CharacterState currentState;
 
-    private bool isAttacking = false; // Ki?m tra zombie có ?ang t?n công không
+    private bool isAttacking = false; // Ki?m tra zombie cï¿½ ?ang t?n cï¿½ng khï¿½ng
 
     void Start()
     {
@@ -104,7 +104,7 @@ public class ZombieScript : MonoBehaviour
                 navMeshAgent.isStopped = true; // D?ng di chuy?n
                 animator.SetTrigger("Attack");
                 damageZone.BeginAttack();
-                Invoke(nameof(ResumeMovement), 1.5f); // Ti?p t?c di chuy?n sau 1.5 giây
+                Invoke(nameof(ResumeMovement), 1.5f); // Ti?p t?c di chuy?n sau 1.5 giï¿½y
                 break;
 
             case CharacterState.Die:
@@ -127,7 +127,7 @@ public class ZombieScript : MonoBehaviour
 
     private void DropHamburger()
     {
-        // Lo?i b? ?i?u ki?n ki?m tra t? l?, burger luôn ???c t?o
+        // Lo?i b? ?i?u ki?n ki?m tra t? l?, burger luï¿½n ???c t?o
         if (!hasDroppedBurger)
         {
             Instantiate(hamburgerPrefab, transform.position, Quaternion.identity);
