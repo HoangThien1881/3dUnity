@@ -9,33 +9,33 @@ public class DogAI : MonoBehaviour
     public Transform player;            // Ng??i ch?i
     public Animator animator;           // Animator ?? ?i?u khi?n animation
 
-    public float detectionRadius = 10f; // Bán kính phát hi?n zombie
-    public float attackRadius = 2f;     // Bán kính t?n công zombie
-    public float attackDelay = 1f;      // Th?i gian gi?a các ?òn t?n công
+    public float detectionRadius = 10f; // Bï¿½n kï¿½nh phï¿½t hi?n zombie
+    public float attackRadius = 2f;     // Bï¿½n kï¿½nh t?n cï¿½ng zombie
+    public float attackDelay = 1f;      // Th?i gian gi?a cï¿½c ?ï¿½n t?n cï¿½ng
 
-    private Transform targetZombie;     // Zombie mà con chó ?ang t?n công
-    private bool isAttacking = false;   // Ki?m tra xem con chó có ?ang t?n công không
+    private Transform targetZombie;     // Zombie mï¿½ con chï¿½ ?ang t?n cï¿½ng
+    private bool isAttacking = false;   // Ki?m tra xem con chï¿½ cï¿½ ?ang t?n cï¿½ng khï¿½ng
 
     void Update()
     {
-        // Ki?m tra n?u zombie ?ã b? tiêu di?t, và n?u ?ã thì reset targetZombie
+        // Ki?m tra n?u zombie ?ï¿½ b? tiï¿½u di?t, vï¿½ n?u ?ï¿½ thï¿½ reset targetZombie
         if (targetZombie != null && targetZombie.GetComponent<Health>().currentHP <= 0)
         {
             targetZombie = null;
         }
 
-        // N?u con chó ?ang t?n công, hãy ti?p t?c t?n công
+        // N?u con chï¿½ ?ang t?n cï¿½ng, hï¿½y ti?p t?c t?n cï¿½ng
         if (isAttacking && targetZombie != null)
         {
             AttackZombie();
         }
         else
         {
-            // Tìm zombie g?n nh?t n?u không có m?c tiêu
+            // Tï¿½m zombie g?n nh?t n?u khï¿½ng cï¿½ m?c tiï¿½u
             FindZombie();
         }
 
-        // N?u không t?n công và không có zombie ?? t?n công, quay l?i v?i ng??i ch?i
+        // N?u khï¿½ng t?n cï¿½ng vï¿½ khï¿½ng cï¿½ zombie ?? t?n cï¿½ng, quay l?i v?i ng??i ch?i
         if (!isAttacking && targetZombie == null)
         {
             navMeshAgent.SetDestination(player.position);  // Quay l?i v?i player
@@ -43,7 +43,7 @@ public class DogAI : MonoBehaviour
         }
     }
 
-    // Tìm zombie trong bán kính xác ??nh
+    // Tï¿½m zombie trong bï¿½n kï¿½nh xï¿½c ??nh
     void FindZombie()
     {
         Collider[] zombies = Physics.OverlapSphere(transform.position, detectionRadius);
@@ -58,14 +58,14 @@ public class DogAI : MonoBehaviour
         }
     }
 
-    // B?t ??u t?n công zombie
+    // B?t ??u t?n cï¿½ng zombie
     void StartAttacking(Transform zombie)
     {
-        // Di chuy?n con chó ??n zombie
+        // Di chuy?n con chï¿½ ??n zombie
         navMeshAgent.SetDestination(zombie.position);
         animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
-        // Khi con chó ??n g?n zombie, chuy?n sang tr?ng thái t?n công
+        // Khi con chï¿½ ??n g?n zombie, chuy?n sang tr?ng thï¿½i t?n cï¿½ng
         float distanceToZombie = Vector3.Distance(transform.position, zombie.position);
         if (distanceToZombie < attackRadius)
         {
@@ -74,25 +74,25 @@ public class DogAI : MonoBehaviour
         }
     }
 
-    // T?n công zombie
+    // T?n cï¿½ng zombie
     void AttackZombie()
     {
-        // Gi? s? zombie có script Health, b?n có th? g?i hàm TakeDamage ? ?ây
+        // Gi? s? zombie cï¿½ script Health, b?n cï¿½ th? g?i hï¿½m TakeDamage ? ?ï¿½y
         Health zombieHealth = targetZombie.GetComponent<Health>();
         if (zombieHealth != null)
         {
-            zombieHealth.TakeDamage(10);  // Gây 10 sát th??ng cho zombie
+            zombieHealth.TakeDamage(10);  // Gï¿½y 10 sï¿½t th??ng cho zombie
             StartCoroutine(AttackCooldown());
         }
     }
 
-    // Th?c hi?n t?n công l?i sau m?t kho?ng th?i gian
+    // Th?c hi?n t?n cï¿½ng l?i sau m?t kho?ng th?i gian
     IEnumerator AttackCooldown()
     {
         yield return new WaitForSeconds(attackDelay);
         if (targetZombie != null && targetZombie.GetComponent<Health>().currentHP <= 0)
         {
-            // N?u zombie ch?t, quay l?i v? trí ng??i ch?i
+            // N?u zombie ch?t, quay l?i v? trï¿½ ng??i ch?i
             animator.SetFloat("Speed", 0);  // D?ng animation ch?y khi quay l?i
             navMeshAgent.SetDestination(player.position);  // Quay l?i ng??i ch?i
             isAttacking = false;
@@ -100,7 +100,7 @@ public class DogAI : MonoBehaviour
         }
     }
 
-    // Hàm OnTrigger ?? con chó nh?n di?n zombie khi chúng vào ph?m vi t?n công
+    // Hï¿½m OnTrigger ?? con chï¿½ nh?n di?n zombie khi chï¿½ng vï¿½o ph?m vi t?n cï¿½ng
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Zombie"))
