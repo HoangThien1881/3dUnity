@@ -1,16 +1,21 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class NPC : MonoBehaviour
 {
     public GameObject NPCPanel; // B?ng tho?i c?a NPC
     public TextMeshProUGUI NPCTextContext; // Text hi?n th? n?i dung tho?i
     public string[] content; // N?i dung các dòng tho?i
     Coroutine coroutine; // Bi?n dùng ?? qu?n lý coroutine hi?n th? n?i dung
+    public string nextSceneName; // Tên c?a scene b?n mu?n chuy?n ??n
 
     private void Start()
     {
+        nextSceneName = "game3d"; // Gán tr?c ti?p tên scene trong script
+        NPCPanel.SetActive(true);
+        NPCTextContext.text = "";
+        coroutine = StartCoroutine(ReadContext());
         // Ki?m tra n?u các tham chi?u ?ã ???c gán
         if (NPCPanel == null || NPCTextContext == null)
         {
@@ -38,7 +43,18 @@ public class NPC : MonoBehaviour
         }
 
         // ?n b?ng tho?i khi hoàn thành
-        yield return new WaitForSeconds(3); // ??i 3 giây tr??c khi t?t b?ng tho?i
-        NPCPanel.SetActive(false);
+        yield return new WaitForSeconds(5); // ??i 3 giây tr??c khi t?t b?ng tho?i
+        ChangeScene();
+    }
+    public void ChangeScene()
+    {
+        if (!string.IsNullOrEmpty(nextSceneName)) // Ki?m tra n?u tên scene không r?ng
+        {
+            SceneManager.LoadScene("game3d"); // T?i scene m?i
+        }
+        else
+        {
+            Debug.LogError("Tên scene ch?a ???c gán!");
+        }
     }
 }
