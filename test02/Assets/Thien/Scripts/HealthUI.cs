@@ -4,40 +4,40 @@ using UnityEngine.UI;
 public class HealthUI : MonoBehaviour
 {
     public Slider healthSlider;   // Tham chi?u ??n Slider
-    public Health playerHealth;  // Tham chi?u ??n script Health c?a nhân v?t
+    public Health playerHealth;  // Tham chi?u ??n script Health c?a nhï¿½n v?t
 
     void Start()
     {
-        // ??t giá tr? ban ??u
+        // ??t giï¿½ tr? ban ??u
         healthSlider.maxValue = playerHealth.maxHP;
         healthSlider.value = playerHealth.currentHP;
 
-        // C?p nh?t màu s?c ban ??u
+        // C?p nh?t mï¿½u s?c ban ??u
         UpdateHealthColor();
     }
 
     void Update()
     {
-        // C?p nh?t giá tr? Slider d?a vào máu c?a nhân v?t
+        // C?p nh?t giï¿½ tr? Slider d?a vï¿½o mï¿½u c?a nhï¿½n v?t
         healthSlider.value = playerHealth.currentHP;
 
-        // C?p nh?t màu s?c c?a thanh máu
+        // C?p nh?t mï¿½u s?c c?a thanh mï¿½u
         UpdateHealthColor();
     }
 
     void UpdateHealthColor()
     {
-        // Tính ph?n tr?m máu còn l?i
+        // Tï¿½nh ph?n tr?m mï¿½u cï¿½n l?i
         float healthPercentage = playerHealth.currentHP / playerHealth.maxHP;
 
-        // N?u máu d??i 50%, ??i màu thanh máu thành vàng
+        // N?u mï¿½u d??i 50%, ??i mï¿½u thanh mï¿½u thï¿½nh vï¿½ng
         if (healthPercentage < 0.5f)
         {
-            healthSlider.fillRect.GetComponent<Image>().color = Color.yellow; // Màu vàng
+            healthSlider.fillRect.GetComponent<Image>().color = Color.yellow; // Mï¿½u vï¿½ng
         }
         else
         {
-            healthSlider.fillRect.GetComponent<Image>().color = Color.red; // Màu xanh
+            healthSlider.fillRect.GetComponent<Image>().color = Color.red; // Mï¿½u xanh
         }
     }
 }
