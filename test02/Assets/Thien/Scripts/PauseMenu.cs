@@ -43,7 +43,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Home()
     {
-        SceneManager.LoadScene(0); // Quay v? màn hình chính
+        SceneManager.LoadScene(1); // Quay v? màn hình chính
         Time.timeScale = 1f;       // Khôi ph?c th?i gian
     }
 }

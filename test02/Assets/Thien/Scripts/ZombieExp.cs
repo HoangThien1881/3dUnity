@@ -59,6 +59,7 @@ public class ZombieExp : MonoBehaviour
 
         if (health.currentHP <= 0)
         {
+
             ChangeState(CharacterState.Die);
             return;
         }

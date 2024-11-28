@@ -10,7 +10,7 @@ public class FlyingZombie : MonoBehaviour
     public Vector3 originalePosition;
     public float maxDistance = 50f; // Khoảng cách tối đa zombie có thể bay xa khỏi vị trí ban đầu
     public Health health;
-
+    public PlayerExp playerExp;
     // Xóa Animator và các tham chiếu liên quan đến animation
     // public Animator animator; 
 
@@ -65,7 +65,7 @@ public class FlyingZombie : MonoBehaviour
 
         if (health.currentHP <= 0)
         {
-
+            playerExp.AddExp(15f);
             Destroy(gameObject);
             return;
         }

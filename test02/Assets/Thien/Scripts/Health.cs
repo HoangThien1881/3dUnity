@@ -1,27 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Health : MonoBehaviour
 {
+    public float maxHP; // Máu t?i ?a
+    public float currentHP; // Máu hi?n t?i
 
-    public float maxHP;
-    public float currentHP;
     public virtual void TakeDamage(float damage)
     {
         currentHP -= damage;
         currentHP = Mathf.Max(0, currentHP);
-        Debug.Log("Zombie b? b?n! HP còn l?i: " + currentHP);
+        Debug.Log("Nhân v?t b? t?n công! HP còn l?i: " + currentHP);
 
-        // N?u máu v? 0, zombie ch?t
+        // N?u máu v? 0, nhân v?t ch?t
         if (currentHP <= 0)
         {
-            Debug.Log("Zombie ?ã ch?t!");
+            Debug.Log("Nhân v?t ?ã ch?t!");
         }
     }
+
     private void Start()
     {
-        currentHP = maxHP;
+        currentHP = maxHP; // ??t máu ??y khi b?t ??u
+    }
+
+    // Hàm t?ng máu t?i ?a và h?i ??y máu
+    public void IncreaseMaxHP(float amount)
+    {
+        maxHP += amount; // T?ng máu t?i ?a
+        currentHP = maxHP; // H?i ??y máu
+        Debug.Log("T?ng máu t?i ?a! HP hi?n t?i: " + currentHP);
     }
 }
-

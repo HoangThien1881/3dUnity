@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UI;
+using UnityEngine.UI; // Thêm dòng này ?? s? d?ng Slider
 
 public class ZombieScript : MonoBehaviour
 {
@@ -10,14 +10,14 @@ public class ZombieScript : MonoBehaviour
     public Vector3 originalePosition;
     public float maxDistance = 50f;
     public Health health;
-
+    public PlayerExp playerExp; // Thêm tham chi?u t?i PlayerExp
     public Animator animator;
     public DamageZone damageZone;
     public GameObject hamburgerPrefab;
     public float dropChance = 100f;
 
     private bool hasDroppedBurger = false;
-    public Slider healthBar;
+    public Slider healthBar; // Slider ?? hi?n th? HP
     public Canvas healthBarCanvas;
 
     public enum CharacterState
@@ -28,7 +28,7 @@ public class ZombieScript : MonoBehaviour
     }
     public CharacterState currentState;
 
-    private bool isAttacking = false; // Ki?m tra zombie có ?ang t?n công không
+    private bool isAttacking = false;
 
     void Start()
     {
@@ -55,6 +55,7 @@ public class ZombieScript : MonoBehaviour
         if (health.currentHP <= 0)
         {
             ChangeState(CharacterState.Die);
+            playerExp.AddExp(15f); // C?ng EXP cho ng??i ch?i khi zombie ch?t
             return;
         }
 
@@ -111,7 +112,7 @@ public class ZombieScript : MonoBehaviour
                 navMeshAgent.isStopped = true;
                 animator.SetTrigger("Die");
                 DropHamburger();
-                Destroy(gameObject, 3f);
+                Destroy(gameObject, 3f); // Hu? zombie sau khi ch?t
                 break;
         }
 
@@ -127,7 +128,6 @@ public class ZombieScript : MonoBehaviour
 
     private void DropHamburger()
     {
-        // Lo?i b? ?i?u ki?n ki?m tra t? l?, burger luôn ???c t?o
         if (!hasDroppedBurger)
         {
             Instantiate(hamburgerPrefab, transform.position, Quaternion.identity);
