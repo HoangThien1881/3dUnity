@@ -4,19 +4,9 @@ public class ItemDropper : MonoBehaviour
 {
     public GameObject itemPrefab; // Vật phẩm để thả
     public Transform player; // Đối tượng người chơi (hoặc vị trí của người chơi)
-    public float dropHeight = 5.0f; // Chiều cao thả vật phẩm
     public float dropDistance = 2.0f; // Khoảng cách từ người chơi tới vật phẩm thả
     public int itemCount = 5; // Số lượng vật phẩm có thể thả
     public TMPro.TMP_Text itemCountText; // UI hiển thị số lượng vật phẩm còn lại
-
-    void Start()
-    {
-        // Khởi tạo UI hiển thị số lượng vật phẩm ban đầu
-        if (itemCountText != null)
-        {
-            itemCountText.text = "Gar: " + itemCount;
-        }
-    }
 
     void Update()
     {
@@ -29,17 +19,17 @@ public class ItemDropper : MonoBehaviour
 
     void DropItem()
     {
-        // Tạo vị trí thả vật phẩm ở trước mặt người chơi, cách mặt đất một khoảng cách nhất định
-        Vector3 dropPosition = player.position + player.forward * dropDistance + Vector3.up * dropHeight;
+        // Tạo vị trí thả vật phẩm trước mặt người chơi
+        Vector3 dropPosition = player.position + player.forward * dropDistance;
 
         // Tạo vật phẩm tại vị trí đã tính
         GameObject droppedItem = Instantiate(itemPrefab, dropPosition, Quaternion.identity);
 
-        // Thêm Rigidbody để đảm bảo vật phẩm có thể rơi xuống
+        // Thêm trọng lực và đảm bảo vật phẩm có Rigidbody để rơi xuống
         Rigidbody rb = droppedItem.GetComponent<Rigidbody>();
         if (rb == null)
         {
-            rb = droppedItem.AddComponent<Rigidbody>(); // Nếu không có Rigidbody thì thêm vào
+            rb = droppedItem.AddComponent<Rigidbody>();  // Nếu không có Rigidbody thì thêm vào
         }
 
         // Thiết lập trọng lực
@@ -49,15 +39,12 @@ public class ItemDropper : MonoBehaviour
         itemCount--;
 
         // Cập nhật UI số lượng vật phẩm
-        if (itemCountText != null)
-        {
-            itemCountText.text = "Gar: " + itemCount;
-        }
+        itemCountText.text = "Items: " + itemCount;
 
-        // Nếu không còn vật phẩm, hiển thị thông báo
-        if (itemCount == 0 && itemCountText != null)
+        // Nếu không còn vật phẩm, vô hiệu hóa khả năng thả
+        if (itemCount == 0)
         {
-            itemCountText.text = "Gar: 0";
+            itemCountText.text = "No more items to drop!";
         }
     }
 }
