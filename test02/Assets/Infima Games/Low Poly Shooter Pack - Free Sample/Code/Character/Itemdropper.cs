@@ -45,7 +45,7 @@ public class ItemDropper : MonoBehaviour
         // Nếu không còn vật phẩm, vô hiệu hóa khả năng thả
         if (itemCount == 0)
         {
-            itemCountText.text = "No more items to drop!";
+            itemCountText.text = "Gar: 0";
         }
     }
 }
