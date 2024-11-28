@@ -20,6 +20,10 @@ public class ZombieScript : MonoBehaviour
     public Slider healthBar;
     public Canvas healthBarCanvas;
 
+    public AudioSource audioSource; // Thêm biến cho AudioSource
+    public AudioClip idleSound; // Thêm biến cho âm thanh idle
+    private bool isPlayingIdleSound = false; // Trạng thái phát âm thanh idle
+
     public enum CharacterState
     {
         Normal,
@@ -28,7 +32,7 @@ public class ZombieScript : MonoBehaviour
     }
     public CharacterState currentState;
 
-    private bool isAttacking = false; // Ki?m tra zombie c� ?ang t?n c�ng kh�ng
+    private bool isAttacking = false;
 
     void Start()
     {
@@ -37,6 +41,11 @@ public class ZombieScript : MonoBehaviour
         {
             healthBar.maxValue = health.maxHP;
             healthBar.value = health.currentHP;
+        }
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
         }
     }
 
@@ -68,6 +77,8 @@ public class ZombieScript : MonoBehaviour
             navMeshAgent.SetDestination(target.position);
             animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
 
+            StopIdleSound();
+
             if (distance < 2f)
             {
                 ChangeState(CharacterState.Attack);
@@ -81,6 +92,7 @@ public class ZombieScript : MonoBehaviour
             if (distanceToOriginal < 1f)
             {
                 animator.SetFloat("Speed", 0);
+                PlayIdleSound();
             }
 
             ChangeState(CharacterState.Normal);
@@ -101,16 +113,18 @@ public class ZombieScript : MonoBehaviour
 
             case CharacterState.Attack:
                 isAttacking = true;
-                navMeshAgent.isStopped = true; // D?ng di chuy?n
+                navMeshAgent.isStopped = true;
                 animator.SetTrigger("Attack");
                 damageZone.BeginAttack();
-                Invoke(nameof(ResumeMovement), 1.5f); // Ti?p t?c di chuy?n sau 1.5 gi�y
+                StopIdleSound();
+                Invoke(nameof(ResumeMovement), 1.5f);
                 break;
 
             case CharacterState.Die:
                 navMeshAgent.isStopped = true;
                 animator.SetTrigger("Die");
                 DropHamburger();
+                StopIdleSound();
                 Destroy(gameObject, 3f);
                 break;
         }
@@ -127,11 +141,30 @@ public class ZombieScript : MonoBehaviour
 
     private void DropHamburger()
     {
-        // Lo?i b? ?i?u ki?n ki?m tra t? l?, burger lu�n ???c t?o
         if (!hasDroppedBurger)
         {
             Instantiate(hamburgerPrefab, transform.position, Quaternion.identity);
             hasDroppedBurger = true;
+        }
+    }
+
+    private void PlayIdleSound()
+    {
+        if (!isPlayingIdleSound && idleSound != null && audioSource != null)
+        {
+            audioSource.clip = idleSound;
+            audioSource.loop = true;
+            audioSource.Play();
+            isPlayingIdleSound = true;
+        }
+    }
+
+    private void StopIdleSound()
+    {
+        if (isPlayingIdleSound && audioSource != null)
+        {
+            audioSource.Stop();
+            isPlayingIdleSound = false;
         }
     }
 }
