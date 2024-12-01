@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BossScript : MonoBehaviour
@@ -26,6 +27,7 @@ public class BossScript : MonoBehaviour
     private bool hasDroppedBurger = false;
     public Slider healthBar;
     public Canvas healthBarCanvas;
+    [SerializeField] private string sceneName = "HAPPYENDING";
 
     public enum CharacterState
     {
@@ -66,6 +68,7 @@ public class BossScript : MonoBehaviour
         if (health.currentHP <= 0)
         {
             ChangeState(CharacterState.Die);
+            SceneManager.LoadScene(sceneName);
             return;
         }
 

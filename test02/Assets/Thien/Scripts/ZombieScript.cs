@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UI; // Thêm dòng này ?? s? d?ng Slider
+using UnityEngine.UI; // Thêm dòng này n?u c?n Slider
 
 public class ZombieScript : MonoBehaviour
 {
@@ -20,6 +20,11 @@ public class ZombieScript : MonoBehaviour
     public Slider healthBar; // Slider ?? hi?n th? HP
     public Canvas healthBarCanvas;
 
+    // Thêm bi?n ?? l?u AudioClip và AudioSource
+    public AudioClip attackSound; // Âm thanh khi t?n công
+    public AudioClip deathSound;  // Âm thanh khi ch?t
+    private AudioSource audioSource; // AudioSource ?? phát âm thanh
+
     public enum CharacterState
     {
         Normal,
@@ -33,6 +38,10 @@ public class ZombieScript : MonoBehaviour
     void Start()
     {
         originalePosition = transform.position;
+
+        // Kh?i t?o AudioSource
+        audioSource = GetComponent<AudioSource>();
+
         if (healthBar != null)
         {
             healthBar.maxValue = health.maxHP;
@@ -105,12 +114,26 @@ public class ZombieScript : MonoBehaviour
                 navMeshAgent.isStopped = true; // D?ng di chuy?n
                 animator.SetTrigger("Attack");
                 damageZone.BeginAttack();
+
+                // Phát âm thanh t?n công
+                if (attackSound != null)
+                {
+                    audioSource.PlayOneShot(attackSound); // Phát âm thanh t?n công
+                }
+
                 Invoke(nameof(ResumeMovement), 1.5f); // Ti?p t?c di chuy?n sau 1.5 giây
                 break;
 
             case CharacterState.Die:
                 navMeshAgent.isStopped = true;
                 animator.SetTrigger("Die");
+
+                // Phát âm thanh khi ch?t
+                if (deathSound != null)
+                {
+                    audioSource.PlayOneShot(deathSound); // Phát âm thanh ch?t
+                }
+
                 DropHamburger();
                 Destroy(gameObject, 3f); // Hu? zombie sau khi ch?t
                 break;
